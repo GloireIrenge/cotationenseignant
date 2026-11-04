@@ -1,8 +1,8 @@
-# Cota — Évaluation des enseignements
+# UNITECH — Évaluation des enseignements
 
 Application Next.js avec Supabase pour gérer les enseignants, leurs cours et des évaluations anonymes partagées par lien.
 
-## Fonctionnalités
+## Fonctionnalitésgit
 
 - Connexion réservée à l’administration.
 - Gestion des enseignants (nom, post-nom, prénom et grade académique) et des cours.

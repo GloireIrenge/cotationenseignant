@@ -11,8 +11,8 @@ export default function Home() {
     <main>
       <nav className="topbar">
         <Link className="brand" href="/">
-          <span className="brand-mark">C</span>
-          <span>Cota<span className="brand-dot">.</span></span>
+          <img className="brand-logo" src="/unitech-logo.svg" alt="" />
+          <span>UNITECH</span>
         </Link>
         <Link className="nav-link" href="/admin">Espace administration <span aria-hidden="true">↗</span></Link>
       </nav>
@@ -65,11 +65,11 @@ export default function Home() {
         </div>
         <div className="student-cta">
           <div><span className="eyebrow">VOUS AVEZ REÇU UN LIEN ?</span><h2>Commencez votre évaluation.</h2><p>Ouvrez simplement le lien transmis par votre établissement pour donner votre avis.</p></div>
-          <span className="cta-mark" aria-hidden="true">C.</span>
+          <span className="cta-mark" aria-hidden="true">U.</span>
         </div>
       </section>
 
-      <footer className="site-footer"><Link className="brand" href="/"><span className="brand-mark">C</span><span>Cota<span className="brand-dot">.</span></span></Link><span>La qualité de l’enseignement se construit ensemble.</span><Link href="/admin">Administration ↗</Link></footer>
+      <footer className="site-footer"><Link className="brand" href="/"><img className="brand-logo" src="/unitech-logo.svg" alt="" /><span>UNITECH</span></Link><span>La qualité de l’enseignement se construit ensemble.</span><Link href="/admin">Administration ↗</Link></footer>
     </main>
   );
 }

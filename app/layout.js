@@ -1,8 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Cota — Évaluation des enseignements",
-  description: "Une plateforme simple et confidentielle pour évaluer la qualité des enseignements."
+  title: "UNITECH — Évaluation des enseignements",
+  description: "La plateforme UNITECH pour évaluer la qualité des enseignements.",
+  icons: { icon: "/unitech-logo.svg" }
 };
 
 export default function RootLayout({ children }) {

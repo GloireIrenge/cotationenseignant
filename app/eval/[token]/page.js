@@ -81,7 +81,7 @@ export default function EvaluationPage() {
   return (
     <main className="evaluation-shell">
       <header className="evaluation-header">
-        <Link className="brand" href="/"><span className="brand-mark">C</span><span>Cota<span className="brand-dot">.</span></span></Link>
+        <Link className="brand" href="/"><img className="brand-logo" src="/unitech-logo.svg" alt="" /><span>UNITECH</span></Link>
         <span className="privacy-badge"><span>●</span> Réponse anonyme</span>
       </header>
       <div className="evaluation-content">
@@ -119,11 +119,11 @@ export default function EvaluationPage() {
           {message && <p className="form-error" role="alert">{message}</p>}
         </form>
       </div>
-      <footer className="evaluation-footer">Cota · La qualité de l’enseignement se construit ensemble.</footer>
+      <footer className="evaluation-footer">UNITECH · La qualité de l’enseignement se construit ensemble.</footer>
     </main>
   );
 }
 
 function MessagePage({ title, text }) {
-  return <main className="evaluation-shell"><div className="success-card"><span className="eyebrow">COTA</span><h1>{title}</h1><p>{text}</p><Link className="text-link" href="/">Retour à l’accueil ↗</Link></div></main>;
+  return <main className="evaluation-shell"><div className="success-card"><span className="eyebrow">UNITECH</span><h1>{title}</h1><p>{text}</p><Link className="text-link" href="/">Retour à l’accueil ↗</Link></div></main>;
 }

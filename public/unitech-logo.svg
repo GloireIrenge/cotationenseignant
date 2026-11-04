@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 450" role="img" aria-labelledby="title">
+  <title id="title">UNITECH, Knowledge and Service</title>
+  <path fill="#d4a900" d="M16 8h368v279c0 65-61 126-184 157C77 413 16 352 16 287z"/>
+  <path fill="#fff" d="M27 19h346v268c0 57-55 111-173 143C82 398 27 344 27 287z"/>
+  <path fill="#ffeb00" stroke="#1c1c1c" stroke-width="2" d="M37 29h326v61H37z"/>
+  <text x="200" y="73" fill="#080808" font-family="Arial,sans-serif" font-size="42" font-weight="800" text-anchor="middle">UNITECH</text>
+  <path fill="#fff" stroke="#1c1c1c" stroke-width="2" d="M37 101c71-8 119 11 151 73v161c-34-57-82-78-151-85z"/>
+  <path fill="#3976f6" stroke="#1c1c1c" stroke-width="2" d="M363 101c-71-8-119 11-175 73v161c45-57 106-78 175-85z"/>
+  <path fill="#ffeb00" stroke="#111" stroke-width="2" d="m188 159 14 2 4 120 31-12-39 62-40-62 31 12z"/>
+  <path fill="#ffeb00" stroke="#111" stroke-width="2" d="m111 154 12 13-62 43 23 14-50 7 28-43 1 17z"/>
+  <path fill="#ffeb00" stroke="#111" stroke-width="2" d="m234 156-12 13 62 43-23 14 50 7-28-43-1 17z"/>
+  <path fill="#fff" stroke="#222" stroke-width="3" d="m61 131 37-9 24 39-48 12z"/>
+  <path fill="none" stroke="#222" stroke-width="3" d="m74 127 14 38m10-43 19 34"/>
+  <path fill="#111" d="m78 244 39-18 37 17-39 19z"/>
+  <path fill="#202020" d="m80 247 35 17v18l-35-16zm37 17 35-18v19l-35 17z"/>
+  <path fill="#ffeb00" d="m279 225 8 19 21 1-16 13 6 20-19-11-18 11 6-20-16-13 21-1z"/>
+  <path fill="#171717" d="m276 132 8-4 9 2 7-3 10 5-7 4-10-2-9 3z"/>
+  <path fill="none" stroke="#171717" stroke-width="3" d="m286 132-8-9m14 9 6-12m-27 12-10-4m39 5 10-5m-38 7-2 12m19-12 3 12"/>
+  <path fill="#ffeb00" stroke="#d4a900" stroke-width="5" d="M37 348q68 44 163 66 95-22 163-66l-8 28q-59 44-155 67-96-23-155-67z"/>
+  <text x="200" y="384" fill="#111" font-family="Arial,sans-serif" font-size="21" font-style="italic" font-weight="700" text-anchor="middle">Knowledge and Service</text>
+</svg>

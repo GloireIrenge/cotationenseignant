@@ -199,9 +199,9 @@ export default function AdminPage() {
 
   return (
     <main className="admin-shell">
-      <header className="admin-topbar"><Link className="brand" href="/"><span className="brand-mark">C</span><span>Cota<span className="brand-dot">.</span></span></Link><div className="admin-user"><span className="admin-user-dot" /> Administration <button onClick={() => supabase.auth.signOut()}>Se déconnecter ↗</button></div></header>
+      <header className="admin-topbar"><Link className="brand" href="/"><img className="brand-logo" src="/unitech-logo.svg" alt="" /><span>UNITECH</span></Link><div className="admin-user"><span className="admin-user-dot" /> Administration <button onClick={() => supabase.auth.signOut()}>Se déconnecter ↗</button></div></header>
       <section className="admin-main">
-        <div className="admin-heading"><div><span className="eyebrow">TABLEAU DE BORD</span><h1>Bonjour, <span>Admin.</span></h1><p>Gérez vos cours, partagez les liens et consultez les retours des étudiants.</p></div><span className="dashboard-mark">C.</span></div>
+        <div className="admin-heading"><div><span className="eyebrow">TABLEAU DE BORD</span><h1>Bonjour, <span>Admin.</span></h1><p>Gérez vos cours, partagez les liens et consultez les retours des étudiants.</p></div><span className="dashboard-mark">U.</span></div>
         {error && <div className="alert alert-error" role="alert">{error}<button onClick={() => setError("")}>×</button></div>}
         {notice && <div className="alert alert-success" role="status">{notice}<button onClick={() => setNotice("")}>×</button></div>}
         <div className="stats-grid">
@@ -258,17 +258,17 @@ export default function AdminPage() {
           )}
         </section>
       </section>
-      <footer className="admin-footer"><span>Cota<span className="brand-dot">.</span> · Espace administration</span><Link href="/">Voir la page d’accueil ↗</Link></footer>
+      <footer className="admin-footer"><span>UNITECH · Espace administration</span><Link href="/">Voir la page d’accueil ↗</Link></footer>
     </main>
   );
 }
 
 function LoginPage({ login, setLogin, signIn, busy, error }) {
-  return <main className="login-shell"><Link className="brand" href="/"><span className="brand-mark">C</span><span>Cota<span className="brand-dot">.</span></span></Link><div className="login-card"><span className="eyebrow">ESPACE SÉCURISÉ</span><h1>Bon retour<span>.</span></h1><p>Connectez-vous pour gérer les évaluations des enseignements.</p><form className="admin-form" onSubmit={signIn}><label>Adresse e-mail<input type="email" autoComplete="email" value={login.email} onChange={(event) => setLogin({ ...login, email: event.target.value })} required /></label><label>Mot de passe<input type="password" autoComplete="current-password" value={login.password} onChange={(event) => setLogin({ ...login, password: event.target.value })} required /></label>{error && <p className="form-error" role="alert">{error}</p>}<button className="button button-primary form-submit" disabled={busy}>{busy ? "Connexion…" : "Se connecter"} <span>↗</span></button></form><Link className="text-link" href="/">← Retour à l’accueil</Link></div><span className="login-side-note">LA QUALITÉ SE CONSTRUIT ENSEMBLE.</span></main>;
+  return <main className="login-shell"><Link className="brand" href="/"><img className="brand-logo" src="/unitech-logo.svg" alt="" /><span>UNITECH</span></Link><div className="login-card"><span className="eyebrow">ESPACE SÉCURISÉ</span><h1>Bon retour<span>.</span></h1><p>Connectez-vous pour gérer les évaluations des enseignements.</p><form className="admin-form" onSubmit={signIn}><label>Adresse e-mail<input type="email" autoComplete="email" value={login.email} onChange={(event) => setLogin({ ...login, email: event.target.value })} required /></label><label>Mot de passe<input type="password" autoComplete="current-password" value={login.password} onChange={(event) => setLogin({ ...login, password: event.target.value })} required /></label>{error && <p className="form-error" role="alert">{error}</p>}<button className="button button-primary form-submit" disabled={busy}>{busy ? "Connexion…" : "Se connecter"} <span>↗</span></button></form><Link className="text-link" href="/">← Retour à l’accueil</Link></div><span className="login-side-note">LA QUALITÉ SE CONSTRUIT ENSEMBLE.</span></main>;
 }
 
 function SetupRequired() {
-  return <main className="login-shell"><Link className="brand" href="/"><span className="brand-mark">C</span><span>Cota<span className="brand-dot">.</span></span></Link><div className="login-card"><span className="eyebrow">CONFIGURATION REQUISE</span><h1>Reliez Supabase<span>.</span></h1><p>Ajoutez NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY dans votre fichier .env.local en développement ou dans les variables d’environnement de Vercel.</p><Link className="text-link" href="/">← Retour à l’accueil</Link></div></main>;
+  return <main className="login-shell"><Link className="brand" href="/"><img className="brand-logo" src="/unitech-logo.svg" alt="" /><span>UNITECH</span></Link><div className="login-card"><span className="eyebrow">CONFIGURATION REQUISE</span><h1>Reliez Supabase<span>.</span></h1><p>Ajoutez NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY dans votre fichier .env.local en développement ou dans les variables d’environnement de Vercel.</p><Link className="text-link" href="/">← Retour à l’accueil</Link></div></main>;
 }
 
 function StatCard({ label, value, mark }) {
