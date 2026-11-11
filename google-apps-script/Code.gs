@@ -154,7 +154,6 @@ function createEvaluation_(spreadsheet, request) {
   );
   form.setCollectEmail(false);
   form.setLimitOneResponsePerUser(false);
-  form.setRequireLogin(false);
   form.setConfirmationMessage("Merci. Votre cotation a été enregistrée.");
   CRITERIA.forEach((criterion) => {
     form.addScaleItem()
