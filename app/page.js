@@ -3,7 +3,7 @@ import Link from "next/link";
 const highlights = [
   { number: "01", title: "Un avis qui compte", text: "Évaluez chaque aspect du cours avec une note claire sur 10." },
   { number: "02", title: "Une démarche confidentielle", text: "Les réponses sont anonymes et consultables uniquement par l’administration." },
-  { number: "03", title: "Des résultats utiles", text: "Les résultats sont calculés automatiquement et exportables dans Excel." }
+  { number: "03", title: "Des résultats utiles", text: "Les cotations sont calculées automatiquement et enregistrées dans Google Sheets." }
 ];
 
 export default function Home() {
