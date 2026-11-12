@@ -145,35 +145,53 @@ function createEvaluation_(spreadsheet, request) {
   const courseId = courseMatch ? courseMatch[0] : Utilities.getUuid();
   if (!courseMatch) coursesSheet.appendRow([courseId, teacherId, values.course_title, values.domain, values.promotion, new Date()]);
 
-  const form = FormApp.create(values.evaluation_title + " — " + values.course_title);
-  form.setDescription(
-    "Évaluation anonyme de " + values.course_title + "\n" +
-    "Enseignant : " + values.first_name + " " + values.post_name + " " + values.last_name + "\n" +
-    "Promotion : " + values.promotion + "\n\n" +
-    "Attribuez une note de 0 à 10 à chaque critère. Aucune adresse e-mail n’est collectée."
+  const form = withStage_("Création du formulaire", () =>
+    FormApp.create(values.evaluation_title + " — " + values.course_title)
   );
-  form.setCollectEmail(false);
-  form.setLimitOneResponsePerUser(false);
-  form.setConfirmationMessage("Merci. Votre cotation a été enregistrée.");
-  CRITERIA.forEach((criterion) => {
+  withStage_("Configuration du formulaire", () => {
+    form.setDescription(
+      "Évaluation anonyme de " + values.course_title + "\n" +
+      "Enseignant : " + values.first_name + " " + values.post_name + " " + values.last_name + "\n" +
+      "Promotion : " + values.promotion + "\n\n" +
+      "Attribuez une note de 0 à 10 à chaque critère. Aucune adresse e-mail n’est collectée."
+    );
+    form.setCollectEmail(false);
+    form.setLimitOneResponsePerUser(false);
+    form.setConfirmationMessage("Merci. Votre cotation a été enregistrée.");
+  });
+  CRITERIA.forEach((criterion) => withStage_("Ajout du critère « " + criterion + " »", () => {
     form.addScaleItem()
       .setTitle(criterion)
       .setBounds(0, 10)
       .setLabels("Pas du tout satisfait", "Très satisfait")
       .setRequired(true);
-  });
-  form.setDestination(FormApp.DestinationType.SPREADSHEET, spreadsheet.getId());
+  }));
+  withStage_("Liaison au Google Sheet", () =>
+    form.setDestination(FormApp.DestinationType.SPREADSHEET, spreadsheet.getId())
+  );
 
   const evaluationId = Utilities.getUuid();
-  ScriptApp.newTrigger("onFormSubmit").forForm(form).onFormSubmit().create();
-  getSheet_(spreadsheet, "evaluations").appendRow([
-    evaluationId, courseId, values.evaluation_title, form.getId(), form.getPublishedUrl(), form.getEditUrl(), true, new Date()
-  ]);
+  withStage_("Création du déclencheur de réponse", () =>
+    ScriptApp.newTrigger("onFormSubmit").forForm(form).onFormSubmit().create()
+  );
+  withStage_("Enregistrement de la campagne", () =>
+    getSheet_(spreadsheet, "evaluations").appendRow([
+      evaluationId, courseId, values.evaluation_title, form.getId(), form.getPublishedUrl(), form.getEditUrl(), true, new Date()
+    ])
+  );
 
   return {
     ok: true,
     evaluation: { id: evaluationId, form_url: form.getPublishedUrl() }
   };
+}
+
+function withStage_(stage, callback) {
+  try {
+    return callback();
+  } catch (error) {
+    throw new Error(stage + " : " + (error.message || String(error)));
+  }
 }
 
 function toggleEvaluation_(spreadsheet, evaluationId) {
