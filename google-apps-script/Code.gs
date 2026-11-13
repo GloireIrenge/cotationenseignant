@@ -20,7 +20,9 @@ const SHEETS = {
 };
 
 function initialize() {
-  ensureSheets_(getSpreadsheet_());
+  const spreadsheet = getSpreadsheet_();
+  ensureSheets_(spreadsheet);
+  ensureExpiryTrigger_(spreadsheet);
   const temporaryForm = FormApp.create("UNITECH - autorisation");
   DriveApp.getFileById(temporaryForm.getId()).setTrashed(true);
   const temporaryTrigger = ScriptApp.newTrigger("onFormSubmit").timeBased().after(60 * 60 * 1000).create();
@@ -35,6 +37,8 @@ function doPost(event) {
 
     const spreadsheet = getSpreadsheet_();
     ensureSheets_(spreadsheet);
+    ensureExpiryTrigger_(spreadsheet);
+    expireEvaluations_(spreadsheet);
     let result;
     if (request.action === "dashboard") result = dashboard_(spreadsheet);
     else if (request.action === "createEvaluation") result = createEvaluation_(spreadsheet, request);
@@ -52,6 +56,10 @@ function onFormSubmit(event) {
   const formId = event.source.getId();
   const campaign = findCampaignByFormId_(spreadsheet, formId);
   if (!campaign || !campaign.is_active) return;
+  if (isExpired_(campaign.created_at)) {
+    expireCampaign_(spreadsheet, campaign.row_index, campaign.form_id);
+    return;
+  }
 
   const ratings = event.response.getItemResponses().map((itemResponse) => Number(itemResponse.getResponse()));
   if (ratings.length !== CRITERIA.length || ratings.some((score) => !Number.isInteger(score) || score < 0 || score > 10)) {
@@ -122,6 +130,64 @@ function dashboard_(spreadsheet) {
   };
 }
 
+function ensureExpiryTrigger_(spreadsheet) {
+  const exists = ScriptApp.getProjectTriggers().some((trigger) =>
+    trigger.getHandlerFunction() === "expireEvaluations"
+  );
+  if (!exists) scheduleExpiryTrigger_(spreadsheet);
+}
+
+function expireEvaluations() {
+  const spreadsheet = getSpreadsheet_();
+  ensureSheets_(spreadsheet);
+  expireEvaluations_(spreadsheet);
+  scheduleExpiryTrigger_(spreadsheet);
+}
+
+function expireEvaluations_(spreadsheet) {
+  const sheet = getSheet_(spreadsheet, "evaluations");
+  const campaigns = rows_(sheet);
+  campaigns.forEach((row, index) => {
+    const isActive = row[6] === true || row[6] === "TRUE";
+    if (isActive && isExpired_(row[7])) expireCampaign_(spreadsheet, index + 2, row[3]);
+  });
+}
+
+function expireCampaign_(spreadsheet, rowIndex, formId) {
+  withStage_("Fermeture du formulaire expiré", () =>
+    FormApp.openById(formId).setAcceptingResponses(false)
+  );
+  getSheet_(spreadsheet, "evaluations").getRange(rowIndex, 7).setValue(false);
+}
+
+function scheduleExpiryTrigger_(spreadsheet) {
+  const sheet = getSheet_(spreadsheet, "evaluations");
+  const nextExpiry = rows_(sheet).reduce((earliest, row) => {
+    const isActive = row[6] === true || row[6] === "TRUE";
+    const expiry = isActive ? expiryTimestamp_(row[7]) : null;
+    return expiry !== null && (earliest === null || expiry < earliest) ? expiry : earliest;
+  }, null);
+  ScriptApp.getProjectTriggers()
+    .filter((trigger) => trigger.getHandlerFunction() === "expireEvaluations")
+    .forEach((trigger) => ScriptApp.deleteTrigger(trigger));
+  if (nextExpiry !== null) {
+    ScriptApp.newTrigger("expireEvaluations")
+      .timeBased()
+      .after(Math.max(1000, nextExpiry - Date.now()))
+      .create();
+  }
+}
+
+function isExpired_(createdAt) {
+  const expiry = expiryTimestamp_(createdAt);
+  return expiry !== null && Date.now() >= expiry;
+}
+
+function expiryTimestamp_(createdAt) {
+  const timestamp = createdAt instanceof Date ? createdAt.getTime() : new Date(createdAt).getTime();
+  return Number.isFinite(timestamp) ? timestamp + 24 * 60 * 60 * 1000 : null;
+}
+
 function createEvaluation_(spreadsheet, request) {
   const values = {};
   ["first_name", "post_name", "last_name", "academic_grade", "course_title", "domain", "promotion", "evaluation_title"].forEach((key) => {
@@ -155,15 +221,14 @@ function createEvaluation_(spreadsheet, request) {
       "Promotion : " + values.promotion + "\n\n" +
       "Attribuez une note de 0 à 10 à chaque critère. Aucune adresse e-mail n’est collectée."
     );
-    form.setCollectEmail(false);
-    form.setLimitOneResponsePerUser(false);
-    form.setConfirmationMessage("Merci. Votre cotation a été enregistrée.");
   });
+  withStage_("Message de confirmation", () =>
+    form.setConfirmationMessage("Merci. Votre cotation a été enregistrée.")
+  );
   CRITERIA.forEach((criterion) => withStage_("Ajout du critère « " + criterion + " »", () => {
-    form.addScaleItem()
+    form.addMultipleChoiceItem()
       .setTitle(criterion)
-      .setBounds(0, 10)
-      .setLabels("Pas du tout satisfait", "Très satisfait")
+      .setChoiceValues(Array.from({ length: 11 }, (_, score) => String(score)))
       .setRequired(true);
   }));
   withStage_("Liaison au Google Sheet", () =>
@@ -179,6 +244,7 @@ function createEvaluation_(spreadsheet, request) {
       evaluationId, courseId, values.evaluation_title, form.getId(), form.getPublishedUrl(), form.getEditUrl(), true, new Date()
     ])
   );
+  scheduleExpiryTrigger_(spreadsheet);
 
   return {
     ok: true,
@@ -200,17 +266,24 @@ function toggleEvaluation_(spreadsheet, evaluationId) {
   const rowIndex = values.findIndex((row, index) => index > 0 && row[0] === evaluationId);
   if (rowIndex < 1) return { ok: false, error: "Campagne introuvable." };
   const row = values[rowIndex];
+  if (isExpired_(row[7])) {
+    expireCampaign_(spreadsheet, rowIndex + 1, row[3]);
+    return { ok: false, error: "Le lien de cette campagne a expiré." };
+  }
   const nextState = !(row[6] === true || row[6] === "TRUE");
   FormApp.openById(row[3]).setAcceptingResponses(nextState);
   sheet.getRange(rowIndex + 1, 7).setValue(nextState);
+  scheduleExpiryTrigger_(spreadsheet);
   return { ok: true };
 }
 
 function findCampaignByFormId_(spreadsheet, formId) {
-  const row = rows_(getSheet_(spreadsheet, "evaluations")).find((item) => item[3] === formId);
-  if (!row) return null;
+  const campaigns = rows_(getSheet_(spreadsheet, "evaluations"));
+  const rowIndex = campaigns.findIndex((item) => item[3] === formId);
+  if (rowIndex < 0) return null;
+  const row = campaigns[rowIndex];
   const course = findRowById_(getSheet_(spreadsheet, "courses"), 0, row[1]);
-  return { evaluation_id: row[0], course_id: row[1], title: row[2], form_id: row[3], is_active: row[6] === true || row[6] === "TRUE", teacher_id: course[1] };
+  return { evaluation_id: row[0], course_id: row[1], title: row[2], form_id: row[3], is_active: row[6] === true || row[6] === "TRUE", created_at: row[7], row_index: rowIndex + 2, teacher_id: course[1] };
 }
 
 function findRowById_(sheet, column, id) {
